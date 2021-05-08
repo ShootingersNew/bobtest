@@ -1,6 +1,6 @@
 export class AnswerModel {
-  title: String;
-  isChecked: boolean;
+  title: string;
+  id: number;
   constructor(init?: Partial<AnswerModel>) {
     if (init) {
       Object.assign(this, init);
