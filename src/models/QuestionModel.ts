@@ -6,7 +6,7 @@ export class QuestionModel {
   type: typesUnion;
   types: { title: string; id: typesUnion }[];
   answers: AnswerModel[];
-  correctAnswers: string[];
+  correctAnswers: number[];
   constructor(init?: Partial<QuestionModel>) {
     if (init) {
       Object.assign(this, init);

@@ -22,6 +22,6 @@ export default class FirstTaskView extends Vue {
       new AnswerModel({ title: "Второй ответ", id: 1 }),
       new AnswerModel({ title: "Третий ответ", id: 2 }),
     ],
-    correctAnswers: ["0"],
+    correctAnswers: [0],
   });
 }
