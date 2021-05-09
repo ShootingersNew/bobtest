@@ -24,4 +24,10 @@ export default class FirstTaskView extends Vue {
     ],
     correctAnswers: [0],
   });
+
+  content: null | QuestionModel = null;
+
+  getQuestionContent(obj: QuestionModel): void {
+    this.content = obj;
+  }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="editQuestion">
+  <v-form class="editQuestion">
     <button @click="removeAnswer(0)"></button>
     <div class="editQuestion__content">
       <v-row no-gutters align="baseline" class="mt-5">
@@ -86,9 +86,17 @@
       </v-btn>
     </div>
     <v-row class="editQuestion__bottomPanel mt-3" justify="center">
-      <v-btn dark width="300px" large color="red accent-2">Готово</v-btn>
+      <v-btn
+        class="editQuestion__submit"
+        @click="submitForm"
+        dark
+        width="300px"
+        large
+        color="red accent-2"
+        >Готово</v-btn
+      >
     </v-row>
-  </div>
+  </v-form>
 </template>
 <style>
 .editQuestion__subtitle {
@@ -113,15 +121,22 @@ import { QuestionModel } from "@/models/QuestionModel";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 @Component({})
 export default class EditQuestion extends Vue {
-  @Prop({ default: () => new QuestionModel({ answers: [] }) })
-  question: QuestionModel;
+  @Prop({
+    required: false,
+  })
+  private question: QuestionModel;
 
-  get editQuestion(): Partial<QuestionModel> {
-    return this.question;
-  }
+  @Prop({})
+  submitFunc?: (obj: QuestionModel) => void;
 
-  set editQuestion(val: Partial<QuestionModel>) {
-    this.$emit("update:question", val);
+  editQuestion: QuestionModel = new QuestionModel({
+    correctAnswers: [],
+    type: "one",
+  });
+
+  created(): void {
+    this.question &&
+      (this.editQuestion = JSON.parse(JSON.stringify(this.question)));
   }
 
   removeAnswer(id: number): void {
@@ -145,6 +160,13 @@ export default class EditQuestion extends Vue {
       })
     );
   }
+
+  submitForm(): void {
+    const copiedQuestion = JSON.parse(JSON.stringify(this.editQuestion));
+    this.question && this.$emit("update:question", copiedQuestion);
+    this.submitFunc && this.submitFunc(copiedQuestion);
+  }
+
   @Watch("editQuestion.type")
   typeWatcher(): void {
     this.editQuestion.correctAnswers = [];
