@@ -1,43 +1,153 @@
 <template>
-  <div>
-    <v-divider></v-divider>
-    <v-text-field
-      class="mt-3 mb-3 editQuestion__title"
-      v-model="editQuestion.title"
-    ></v-text-field>
-    <v-divider></v-divider>
-    <v-select
-      :items="editQuestion.types"
-      v-model="editQuestion.type"
-      item-text="title"
-      item-value="id"
-    ></v-select>
-    {{ editQuestion }}
-    <v-list>
-      <v-list-item
-        class="editQuestion__answer"
-        :key="idx"
-        v-for="(item, idx) in editQuestion.answers"
-      >
-        {{ idx + 1 }})
+  <div class="editQuestion">
+    <button @click="removeAnswer(0)"></button>
+    <div class="editQuestion__content">
+      <v-row no-gutters align="baseline" class="mt-5">
+        <v-col class="title mr-3 editQuestion__subtitle" cols="1"
+          >Вопрос:</v-col
+        >
         <v-text-field
-          class="editQuestion__answerTitle"
-          v-model="editQuestion.answers[idx].title"
+          solo
+          class="editQuestion__title"
+          v-model="editQuestion.title"
+          clearable
         ></v-text-field>
-        <template v-if="editQuestion.type === 'one'">
-          <v-radio-group v-model="editQuestion.correctAnswers[0]">
-            <v-radio :value="item.id"></v-radio>
-          </v-radio-group>
-        </template>
-        <template v-else>
-          <v-checkbox
-            v-model="editQuestion.correctAnswers"
-            :value="item.id"
-          ></v-checkbox>
-          <v-btn class="editQuestion__removeAnswer">delete</v-btn>
-        </template>
-      </v-list-item>
-    </v-list>
+      </v-row>
+      <v-divider></v-divider>
+      <v-row no-gutters align="baseline mt-5">
+        <v-col class="title mr-3 editQuestion__subtitle" cols="1"
+          >Тип вопроса:</v-col
+        >
+        <v-select
+          solo
+          :items="editQuestion.types"
+          v-model="editQuestion.type"
+          item-text="title"
+          item-value="id"
+        ></v-select>
+      </v-row>
+      <div class="title">Ответы:</div>
+      <v-list>
+        <v-list-item
+          class="editQuestion__answer pl-1"
+          :key="idx"
+          v-for="(item, idx) in editQuestion.answers"
+        >
+          <div class="title mr-3">{{ idx + 1 }})</div>
+          <v-text-field
+            class="editQuestion__answerTitle mb-0"
+            hide-details
+            solo
+            v-model="editQuestion.answers[idx].title"
+          ></v-text-field>
+          <div class="ml-3 d-flex align-center">
+            <div class="editQuestion__checkboxWrapper">
+              <div v-if="idx === 0" class="editQuestion__checkboxHeader">
+                Верный
+              </div>
+              <template v-if="editQuestion.type === 'one'">
+                <v-radio-group
+                  class="mx-5"
+                  v-model="editQuestion.correctAnswers[0]"
+                >
+                  <v-radio color="red accent-2" :value="item.id"></v-radio>
+                </v-radio-group>
+              </template>
+              <template v-else>
+                <v-checkbox
+                  class="mx-5"
+                  v-model="editQuestion.correctAnswers"
+                  :value="item.id"
+                ></v-checkbox>
+              </template>
+            </div>
+            <v-btn
+              class="editQuestion__removeAnswer"
+              @click="removeAnswer(item.id)"
+              fab
+              x-small
+              color="grey"
+              dark
+              depressed
+            >
+              <v-icon> mdi-minus </v-icon>
+            </v-btn>
+          </div>
+        </v-list-item>
+      </v-list>
+      <v-btn
+        class="editQuestion__addAnswer ml-3"
+        @click="addAnswer"
+        fab
+        dark
+        color="red accent-2"
+      >
+        <v-icon dark> mdi-plus </v-icon>
+      </v-btn>
+    </div>
+    <v-row class="editQuestion__bottomPanel mt-3" justify="center">
+      <v-btn dark width="300px" large color="red accent-2">Готово</v-btn>
+    </v-row>
   </div>
 </template>
-<script src="./EditQuestion.ts"></script>
+<style>
+.editQuestion__subtitle {
+  width: 100px;
+}
+.editQuestion__checkboxHeader {
+  position: absolute;
+  top: -30px;
+  color: gray;
+}
+.editQuestion__checkboxWrapper {
+  position: relative;
+}
+.editQuestion__removeAnswer {
+  height: 22px !important;
+  width: 22px !important;
+}
+</style>
+<script lang="ts">
+import { AnswerModel } from "@/models/AnswerModel";
+import { QuestionModel } from "@/models/QuestionModel";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+@Component({})
+export default class EditQuestion extends Vue {
+  @Prop({ default: () => new QuestionModel({ answers: [] }) })
+  question: QuestionModel;
+
+  get editQuestion(): Partial<QuestionModel> {
+    return this.question;
+  }
+
+  set editQuestion(val: Partial<QuestionModel>) {
+    this.$emit("update:question", val);
+  }
+
+  removeAnswer(id: number): void {
+    const filteredAnswers = this.editQuestion.answers
+      ?.filter((answer) => answer.id !== id)
+      .map((x, idx) => {
+        return new AnswerModel({ ...x, id: idx });
+      });
+
+    this.editQuestion.answers = filteredAnswers;
+    this.editQuestion.correctAnswers = this.editQuestion.correctAnswers?.filter(
+      (answer) => answer !== id
+    );
+  }
+
+  addAnswer(): void {
+    this.editQuestion.answers?.push(
+      new AnswerModel({
+        id: this.editQuestion.answers.length,
+        title: "Плейсхолдер",
+      })
+    );
+  }
+  @Watch("editQuestion.type")
+  typeWatcher(): void {
+    this.editQuestion.correctAnswers = [];
+  }
+}
+</script>

@@ -9,12 +9,7 @@ describe("EditQuestion.vue", () => {
   Vue.use(Vuetify);
   const localVue = createLocalVue();
   let vuetify: Vuetify;
-
-  beforeEach(() => {
-    vuetify = new Vuetify();
-  });
-
-  const question = new QuestionModel({
+  let question = new QuestionModel({
     title: "Первый вопрос",
     type: "one",
     types: [
@@ -26,7 +21,24 @@ describe("EditQuestion.vue", () => {
       new AnswerModel({ title: "Второй ответ", id: 1 }),
       new AnswerModel({ title: "Третий ответ", id: 2 }),
     ],
-    correctAnswers: ["0"],
+    correctAnswers: [0],
+  });
+  beforeEach(() => {
+    vuetify = new Vuetify();
+    question = new QuestionModel({
+      title: "Первый вопрос",
+      type: "one",
+      types: [
+        { id: "one", title: "Одиночный выбор" },
+        { id: "multiple", title: "Множественный выбор" },
+      ],
+      answers: [
+        new AnswerModel({ title: "Первый ответ", id: 0 }),
+        new AnswerModel({ title: "Второй ответ", id: 1 }),
+        new AnswerModel({ title: "Третий ответ", id: 2 }),
+      ],
+      correctAnswers: [0],
+    });
   });
 
   const questionWithMultiple = new QuestionModel({
@@ -71,7 +83,7 @@ describe("EditQuestion.vue", () => {
       .find("input")
       .trigger("click");
     expect(wrapper.findComponent({ name: "v-checkbox" }).exists()).toBe(true);
-    expect(wrapper.vm.$props.question.correctAnswers).toStrictEqual([2, 0]);
+    expect(wrapper.vm.$props.question.correctAnswers).toStrictEqual([0]);
   });
 
   it("adds new answer", async () => {
@@ -82,30 +94,32 @@ describe("EditQuestion.vue", () => {
         question,
       },
     });
-    await wrapper.find("editQuestion__addAnswer").trigger("click");
-    expect(wrapper.vm.$props.question.answers).toBe([
-      ...question.answers,
-      new AnswerModel({ id: 3 }),
-    ]);
+    await wrapper.find(".editQuestion__addAnswer").trigger("click");
+    expect(wrapper.vm.$props.question.answers.length).toBe(4);
   });
 
   it("remove answer", async () => {
+    let questionLocal = { ...question };
     let wrapper = mount(EditQuestion, {
       localVue,
       vuetify,
       propsData: {
-        question,
+        question: questionLocal,
       },
     });
-    await wrapper.find("editQuestion__removeAnswer").trigger("click");
-    expect(wrapper.vm.$props.question.answers).toBe([
-      new AnswerModel({ title: "Второй ответ", id: 1 }),
-      new AnswerModel({ title: "Третий ответ", id: 2 }),
+    await wrapper.find(".editQuestion__removeAnswer").trigger("click");
+    expect(wrapper.vm.$props.question.answers[0]).toStrictEqual(
+      new AnswerModel({
+        title: "Второй ответ",
+        id: 0,
+      })
+    );
+    expect(wrapper.vm.$props.question.answers.length).toBe(2);
+    await wrapper.findAll(".editQuestion__removeAnswer").at(1).trigger("click");
+    expect(wrapper.vm.$props.question.answers).toStrictEqual([
+      new AnswerModel({ title: "Второй ответ", id: 0 }),
     ]);
-    await wrapper.findAll("editQuestion__removeAnswer").at(1).trigger("click");
-    expect(wrapper.vm.$props.question.answers).toBe([
-      new AnswerModel({ title: "Третий ответ", id: 2 }),
-    ]);
+    expect(wrapper.vm.$props.question.answers.length).toBe(1);
   });
 
   it("edits text-fields", async () => {
