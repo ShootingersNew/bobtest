@@ -103,7 +103,7 @@
 </style>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Question from "@/components/QuestionList/Question.vue";
+import Question from "@/components/Question/Question.vue";
 import EditQuestion from "@/components/EditQuestion/EditQuestion.vue";
 import { QuestionModel } from "@/models/QuestionModel";
 import { SurveyFormModel } from "@/models/SurveyFormModel";
