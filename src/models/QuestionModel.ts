@@ -2,6 +2,7 @@ import { AnswerModel } from "./AnswerModel";
 
 type typesUnion = "one" | "multiple";
 export class QuestionModel {
+  id: number;
   title = "";
   type: typesUnion = "one";
   types: { title: string; id: typesUnion }[] = [
