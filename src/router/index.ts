@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import FirstTaskView from "../views/FirstTask/FirstTaskView.vue";
 import SecondTaskView from "../views/SecondTask/SecondTaskView.vue";
-
+import EditSurvey from "../components/EditSurvey/EditSurvey.vue";
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -15,6 +15,12 @@ const routes: Array<RouteConfig> = [
     path: "/second",
     name: "SecondTask",
     component: SecondTaskView,
+    children: [
+      {
+        path: "editsurveys",
+        component: EditSurvey,
+      },
+    ],
   },
 ];
 
