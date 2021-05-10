@@ -24,6 +24,7 @@
           v-model="editQuestion.type"
           item-text="title"
           item-value="id"
+          @change="editQuestion.correctAnswers = []"
         ></v-select>
       </v-row>
       <div class="title">Ответы:</div>
@@ -87,7 +88,7 @@
     </div>
     <v-row class="editQuestion__bottomPanel mt-3" justify="center">
       <v-btn
-        class="editQuestion__submit"
+        class="editQuestion__submit submit"
         @click="submitForm"
         dark
         width="300px"
@@ -128,7 +129,6 @@ export default class EditQuestion extends Vue {
 
   @Prop({})
   submitFunc?: (obj: QuestionModel) => void;
-
   editQuestion: QuestionModel = new QuestionModel({
     correctAnswers: [],
     type: "one",
@@ -165,11 +165,6 @@ export default class EditQuestion extends Vue {
     const copiedQuestion = JSON.parse(JSON.stringify(this.editQuestion));
     this.question && this.$emit("update:question", copiedQuestion);
     this.submitFunc && this.submitFunc(copiedQuestion);
-  }
-
-  @Watch("editQuestion.type")
-  typeWatcher(): void {
-    this.editQuestion.correctAnswers = [];
   }
 }
 </script>
