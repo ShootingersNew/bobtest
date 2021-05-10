@@ -3,11 +3,11 @@
     <v-app-bar background-color="deep-purple accent-4 " prominent>
       <template v-slot:extension>
         <v-tabs centered>
-          <v-tab>Новости</v-tab>
+          <v-tab disabled>Новости</v-tab>
           <v-tab to="editsurveys">Опросы</v-tab>
-          <v-tab>Материалы</v-tab>
-          <v-tab>Сценарий</v-tab>
-          <v-tab>Назначение</v-tab>
+          <v-tab disabled>Материалы</v-tab>
+          <v-tab disabled>Сценарий</v-tab>
+          <v-tab disabled>Назначение</v-tab>
         </v-tabs>
       </template>
     </v-app-bar>
