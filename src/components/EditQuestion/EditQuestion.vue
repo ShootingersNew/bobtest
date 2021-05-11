@@ -14,7 +14,7 @@
         ></v-text-field>
       </v-row>
       <v-divider></v-divider>
-      <v-row no-gutters align="baseline mt-5">
+      <v-row no-gutters class="mt-5" align="baseline">
         <v-col class="title mr-3 editQuestion__subtitle" cols="1"
           >Тип вопроса:</v-col
         >
@@ -119,7 +119,7 @@
 <script lang="ts">
 import { AnswerModel } from "@/models/AnswerModel";
 import { QuestionModel } from "@/models/QuestionModel";
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 @Component({})
 export default class EditQuestion extends Vue {
   @Prop({
